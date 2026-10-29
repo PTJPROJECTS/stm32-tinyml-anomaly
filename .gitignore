@@ -1,0 +1,11 @@
+build/
+.pio/
+.vscode/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/
+third_party/tflm/
+third_party/tflite-micro/
+firmware/lib/tflm
+out/
