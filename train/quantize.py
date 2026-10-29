@@ -39,7 +39,10 @@ class Int8Runner:
         self.out_scale, self.out_zp = self.out["quantization"]
 
     def quantize_input(self, x):
-        q = np.round(x / self.in_scale) + self.in_zp
+        # roundf() in C rounds halves away from zero, np.round rounds them to
+        # even. Use the C rule so both sides agree on exact .5 cases.
+        v = x / self.in_scale
+        q = np.sign(v) * np.floor(np.abs(v) + 0.5) + self.in_zp
         return np.clip(q, -128, 127).astype(np.int8)
 
     def run_q(self, xq):
