@@ -9,7 +9,16 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SRC="$ROOT/third_party/tflite-micro"
 OUT="$ROOT/third_party/tflm"
 
+link_for_pio() {
+    # PlatformIO picks the library up from firmware/lib/tflm
+    mkdir -p "$ROOT/firmware/lib"
+    ln -sfn ../../third_party/tflm "$ROOT/firmware/lib/tflm"
+    cp "$ROOT/tools/tflm_library.json" "$OUT/library.json"
+}
+
 if [ -f "$OUT/.sha" ] && [ "$(cat "$OUT/.sha")" = "$TFLM_SHA" ]; then
+    # tree can come from a CI cache, the symlink can't
+    link_for_pio
     echo "third_party/tflm already at $TFLM_SHA"
     exit 0
 fi
@@ -27,9 +36,5 @@ rm -rf "$OUT"
     --makefile_options="TARGET=cortex_m_generic TARGET_ARCH=cortex-m4+fp OPTIMIZED_KERNEL_DIR=cmsis_nn" \
     "$OUT")
 echo "$TFLM_SHA" > "$OUT/.sha"
-
-# PlatformIO picks the library up from firmware/lib/tflm
-mkdir -p "$ROOT/firmware/lib"
-ln -sfn ../../third_party/tflm "$ROOT/firmware/lib/tflm"
-cp "$ROOT/tools/tflm_library.json" "$OUT/library.json"
+link_for_pio
 echo "done: $OUT"

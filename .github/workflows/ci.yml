@@ -71,7 +71,8 @@ jobs:
           path: ~/.platformio
           key: pio-${{ hashFiles('firmware/platformio.ini') }}
 
-      - run: pip install platformio
+      # create_tflm_tree.py needs numpy and pillow
+      - run: pip install platformio numpy pillow
       - run: ./tools/fetch_tflm.sh
       - name: build firmware (nucleo_f446re)
         run: cd firmware && pio run
