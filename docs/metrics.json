@@ -1,0 +1,71 @@
+{
+  "dataset": {
+    "train": 5138,
+    "val": 1084,
+    "test": 1084,
+    "test_per_class": [
+      243,
+      281,
+      280,
+      280
+    ]
+  },
+  "epochs_run": 56,
+  "params": 1260,
+  "macs": 1216,
+  "float_acc": 1.0,
+  "int8_acc": 1.0,
+  "int8_vs_float_agreement": 1.0,
+  "int8_binary": {
+    "false_alarm_rate": 0.0,
+    "miss_rate": 0.0
+  },
+  "int8_confusion": [
+    [
+      243,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      281,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      280,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      280
+    ]
+  ],
+  "int8_recall_per_class": {
+    "normal": 1.0,
+    "inner_race": 1.0,
+    "ball": 1.0,
+    "outer_race": 1.0
+  },
+  "int8_acc_per_load": {
+    "0": 1.0,
+    "1": 1.0,
+    "2": 1.0,
+    "3": 1.0
+  },
+  "tflite_int8_bytes": 4808,
+  "tflite_float_bytes": 7100,
+  "input_quant": [
+    0.02381318435072899,
+    13
+  ],
+  "output_quant": [
+    0.00390625,
+    -128
+  ]
+}
