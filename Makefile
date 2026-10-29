@@ -24,7 +24,7 @@ TFLM_OBJS := $(patsubst $(TFLM)/%,$(BUILD)/tflm/%.o,$(TFLM_SRCS))
 CORE_OBJS := $(BUILD)/core/vib_features.o $(BUILD)/core/anomaly_model.o $(BUILD)/core/model_data.o \
              $(BUILD)/host/tflm_host_port.o
 
-.PHONY: all tflm test pytest train robustness firmware clean distclean
+.PHONY: all tflm test pytest asan train robustness firmware clean distclean
 
 all: $(BUILD)/tvec_check $(BUILD)/test_features
 
@@ -71,6 +71,12 @@ test: all
 
 pytest: all
 	$(PY) -m pytest -q tests
+
+# our code with ASan/UBSan (TFLM lib itself is built without)
+asan:
+	$(MAKE) clean
+	$(MAKE) test SAN="-fsanitize=address,undefined -fno-omit-frame-pointer"
+	$(MAKE) clean
 
 train:
 	$(PY) -m train.train --cross-load

@@ -1,0 +1,77 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  host:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: python deps
+        run: pip install -r requirements.txt
+
+      - name: cache tflm tree
+        uses: actions/cache@v4
+        with:
+          path: third_party/tflm
+          key: tflm-${{ hashFiles('tools/fetch_tflm.sh') }}
+
+      - name: fetch tflm (pinned)
+        run: ./tools/fetch_tflm.sh
+
+      - name: build + C tests
+        run: make -j4 test
+
+      - name: pytest
+        run: make pytest
+
+      - name: C tests with ASan/UBSan
+        run: make asan
+
+  # The CWRU download is ~100 MB and the server is sometimes slow, so the
+  # full retrain only runs when started by hand.
+  retrain:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: make train robustness
+      - uses: actions/upload-artifact@v4
+        with:
+          name: metrics
+          path: |
+            out/metrics.json
+            docs/robustness.json
+
+  firmware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: cache platformio
+        uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: pio-${{ hashFiles('firmware/platformio.ini') }}
+
+      - run: pip install platformio
+      - run: ./tools/fetch_tflm.sh
+      - name: build firmware (nucleo_f446re)
+        run: cd firmware && pio run
