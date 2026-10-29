@@ -1,5 +1,5 @@
 """Settings shared by the training scripts. The C side has the same numbers in
-core/features.h, and tests/test_config_sync.py checks they still match."""
+core/vib_features.h, and tests/test_config_sync.py checks they still match."""
 
 FS_HZ = 12000          # sample rate the MCU runs the ADC at
 WIN = 512              # samples per window (42.7 ms)

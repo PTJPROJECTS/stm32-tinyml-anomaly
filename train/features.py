@@ -1,4 +1,4 @@
-"""Feature extraction, numpy version. core/features.c does the same thing in
+"""Feature extraction, numpy version. core/vib_features.c does the same thing in
 float32 on the MCU, and the tests compare the two.
 
 window (uint16 ADC counts)
